@@ -3,7 +3,8 @@ import io
 from statistics import stdev
 
 # Third-party imports
-from flask import Flask, request, send_file, render_template as rt, Response
+from flask import Flask, request, send_file, flash, Response, redirect, \
+    url_for, render_template as rt
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -15,6 +16,7 @@ from protein import Protein
 
 # Global variables
 app = Flask(__name__)
+app.secret_key = "abracadabra"
 conn = None
 
 
@@ -27,10 +29,10 @@ def get_db() -> None:
     global conn
     if conn is None:
         conn = psycopg2.connect(
-            host='145.97.18.224',
-            user='bpcoogsa1',
-            password='bpcoogsa1',
-            database='bpcoogsa1_db')
+            host=request.form['host'],
+            user=request.form['user'],
+            password=request.form['password'],
+            database=request.form['database'])
 
 
 def get_organisms() -> dict:
@@ -172,6 +174,21 @@ def apply_filters(cogs, rsd, seq_len, met) -> list[Cog]:
     return cogs
 
 
+def check_filter(rsd, avg_length, methionines) -> None:
+    """
+    The function attempts to convert the values that would be found in a
+    correctly formatted COG filter form input.
+
+    :param rsd: string input.
+    :param avg_length: string input.
+    :param methionines: string input.
+    """
+    for boundary in (rsd[0], rsd[1], avg_length[0], avg_length[1]):
+        float(boundary)
+    for integer_boundary in methionines:
+        int(integer_boundary)
+
+
 def barchart_proteins(proteins) -> str:
     """
     The function creates a matplotlib figure containing a barchart of the
@@ -234,18 +251,23 @@ def help_page() -> str:
     return rt('help.html')
 
 
-@app.route('/db_overview', methods=['POST'])
+@app.route('/db_overview', methods=['GET', 'POST'])
 def display_data() -> str:
     """
-    The function fetches Cog objects and finds the ranges for their relative
+    The function fetches Cog objects. If the login form input is not correct,
+    the user is returned to the login and finds the ranges for their relative
     standard deviation, methionines as first amino acid and average sequence
     length. The Cog objects are displayed in a scrollbox, plotted and their
     values are used to fill the filter form.
     """
-    # Fetch Cog objects and store the data used to filter them.
-    cogs = fetch_cogs(cog_filter=False)
-    methionines = [cog.get_methionines().split('/')[0][1] for cog in cogs]
+    try:
+        cogs = fetch_cogs(cog_filter=False)
+    except psycopg2.OperationalError:
+        flash('Wrong credentials, try again.')
+        return redirect(url_for('login'))
+
     rsd = [cog.get_rsd() for cog in cogs]
+    methionines = [cog.get_methionines().split('/')[0][1] for cog in cogs]
     avg_len = [cog.get_avg_seq_len() for cog in cogs]
     return rt('db_overview.html',
               cogs=cogs,
@@ -255,7 +277,7 @@ def display_data() -> str:
               avg_len_range=f'{min(avg_len)} - {max(avg_len)}')
 
 
-@app.route('/filter_cogs', methods=['POST'])
+@app.route('/filter_cogs', methods=['GET', 'POST'])
 def display_filtered() -> str:
     """
     The function renders the database overview page with a filtered list of Cog
@@ -268,12 +290,23 @@ def display_filtered() -> str:
     rsd = request.form['rsd'].strip(' ').split('-')
     avg_length = request.form['avg_len'].strip(' ').split('-')
     methionines = request.form['meth_starts'].strip(' ').split('-')
+
+    # If the input is not correct, an error message is displayed and the user
+    # is returned to the database overview page.
+    try:
+        check_filter(rsd, avg_length, methionines)
+    except ValueError:
+        flash('Your input for the filter form was incorrect. Try again.')
+        return redirect(url_for('display_data'))
+    except IndexError:
+        flash('Your input for the filter form was incorrect. Try again.')
+        return redirect(url_for('display_data'))
+
+    # Cog objects are fetched using 'cog_filter' and the database overview is
+    # rendered.
     cog_filter = (tuple(boundary for boundary in rsd),
                   tuple(boundary for boundary in avg_length),
                   tuple(boundary for boundary in methionines))
-
-    # Cog objects are fetched using the cog_filter and the database overview is
-    # rendered.
     cogs = fetch_cogs(cog_filter)
     return rt('db_overview.html',
               title='COGs in database',
@@ -294,7 +327,14 @@ def view_cog() -> str:
     :return: string that renders the webpage.
     """
     cog_id = request.form['cog_id']
-    protein_data, go_annotation = get_single_cog(cog_id)
+    # If the input is not correct, an error message is displayed and the user
+    # is returned to the database overview page.
+    try:
+        protein_data, go_annotation = get_single_cog(cog_id)
+    except IndexError:
+        flash('Your input for the COG ID form was incorrect. Try again.')
+        return redirect(url_for('display_data'))
+
     go_link = f'http://amigo.geneontology.org/amigo/term/GO:{go_annotation}'
     org_dict = get_organisms()
     proteins = [Protein(p[0], org_dict.get(p[1]), p[3], p[2])

@@ -11,6 +11,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
+{% with messages = get_flashed_messages() %}
+ {% if messages %}
+  <ul>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+  </ul>
+ {% endif %}
+{% endwith %}
+
 <div class="login-panel">
     <p>Connect to your PostgreSQL database using the form below.</p>
     <form class="login-form" action="/db_overview" method="POST">
