@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>COGs in database</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+
+<body>
+
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="db-container">
+    <div class="cog-container">
+
+        {% for cog in cogs %}
+
+        <div class="cog">
+            <header><b>COG ID: {{ cog.get_cog_id() }}</b></header>
+            <p>Average length: {{ cog.get_avg_seq_len() }}<br>
+                RSD: {{ cog.get_rsd() }}<br>
+                Methionines: {{ cog.get_methionines() }}</p>
+            <form class="cog-scrollbox" action="/view_cog" method="POST">
+                <input type="hidden" name="cog_id"
+                       value="{{ cog.get_cog_id() }}">
+                <button class="cog-scrollbox button"
+                        type="submit">View COG</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+    {{ plot|safe }}
+
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="filter-panel" id="first">
+            <form class="filter-form" action="/filter_cogs" method="POST">
+                <label>Relative standard deviation</label>
+                <input type="text" name="rsd" value="{{ rsd_range }}">
+                <label>Average sequence length</label>
+                <input type="text" name="avg_len" value="{{ avg_len_range }}">
+                <label>Methionine starts</label>
+                <input type="text" name="meth_starts" value="{{ meth_range }}">
+                <button type="submit">Filter COGs</button>
+            </form>
+
+                <form class="filter-form" action="/view_cog" method="POST">
+                    <label><br>Enter COG ID:</label>
+                    <input type="text" name="cog_id">
+                    <button type="submit">View COG</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+</body>
+</html>

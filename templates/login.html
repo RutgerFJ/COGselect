@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>COGselect</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+</head>
+
+<body>
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="login-panel">
+    <p>Connect to your PostgreSQL database using the form below.</p>
+    <form class="login-form" action="/db_overview" method="POST">
+        <label>Host</label>
+        <input type="text" name="host" value="145.97.18.224">
+        <label>Username</label>
+        <input type="text" name="user" value="bpcoogsa1">
+        <label>Password</label>
+        <input type="password" name="password" value="bpcoogsa1">
+        <label>Database</label>
+        <input type="text" name="database" value="bpcoogsa1_db">
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+{% endblock %}
+</body>
+</html>

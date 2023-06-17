@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>COGs in database</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+</head>
+
+<body>
+{% extends 'base.html' %}
+{% block content %}
+
+    <div class="db-container" style="display: flex">
+        <div class="cog-container" >
+            {% for protein in proteins %}
+                <div class='protein'>
+                    <p>Protein ID: {{ protein.get_protein_id() }}<br>
+                    Sequence length: {{ protein.get_length() }}<br>
+                    First AA: {{ protein.get_sequence()[0] }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        {{ plot|safe }}
+
+        <div>
+            <h2>{% block title %} COG {{ cog_id }} {% endblock %}</h2>
+            <a href={{ go_link }}>GO annotation</a>
+            <p>Average sequence length: {{ avg_seq_length }}<br>
+                (standard deviation: {{ std_avg_seq_length }})</p>
+
+            <form class="cog-scrollbox" action="/download" method="POST">
+                <input type="hidden" name="cog_id" value="{{ cog_id }}">
+                <button type="submit">Download FASTA</button></form>
+        </div>
+    </div>
+
+{% endblock %}
+</body>
+</html>

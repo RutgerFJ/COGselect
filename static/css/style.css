@@ -1,0 +1,151 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #d6d4d4;
+}
+
+nav a {
+    display: block;
+    height: 100%;
+    width: 100%;
+    text-indent: 1px;
+}
+
+hr {
+    width: 100%;
+    margin: 30px 0;
+    border: none;
+    border-bottom: 1px solid #c9c7c1;
+}
+
+.cog, .protein {
+    white-space: nowrap;
+    padding: 20px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    background-color: #d6d4d4;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 240px;
+}
+
+.content    {
+    margin-top: 20px;
+}
+
+.login-panel {
+    background-color: #d6d4d4;
+    padding: 20px;
+    width: 250px;
+    border-radius: 8px;
+    margin-top: 100px;
+}
+
+.login-form input[type=text], .login-form input[type=password] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #5271FF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.db-container {
+    height: 600px;
+    width: 1280px;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.cog-container {
+    height: 500px;
+    width: 280px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cog {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: #d6d4d4;
+    height: 140px;
+    width: 180px;
+}
+
+.cog-scrollbox button {
+    width: 140px;
+    padding: 10px;
+    background-color: #5271FF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.filter-panel {
+    background-color: #d6d4d4;
+    padding: 20px;
+    width: 250px;
+    margin-left: 50px;
+    border-radius: 8px;
+}
+
+.filter-panel h2 {
+    margin-top: 0;
+}
+
+.filter-form input[type=text] {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.filter-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.filter-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #5271FF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 8px;
+}

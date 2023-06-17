@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>COGselect help</title>
+</head>
+
+<body>
+{% extends 'base.html' %}
+{% block content %}
+<centre>
+<p><br><br>
+    COGselect queries your PostgreSQL COG database to display the COGs and help
+    you analyze them.<br>The database must be built up in accordance with the
+    entity-relationship diagram below.<br> COGselect uses name-specific
+    queries, so you must use the names used in the ERD, but you can freely
+    add more tables and values.
+    <br></p>
+<img src="/static/images/erd.png"/>
+</centre>
+
+{% endblock %}
+</body>
+</html>
